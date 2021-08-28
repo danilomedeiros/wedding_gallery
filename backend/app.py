@@ -7,7 +7,7 @@ from api.likes import likes_api
 from flask_cors import CORS
 import os
 
-app = Flask(__name__, static_folder="../frontend/dist", template_folder="../frontend/dist",static_url_path='/')
+app = Flask(__name__, static_folder="../frontend/dist", template_folder="./frontend/dist",static_url_path='/')
 
 #app = Flask(__name__, static_folder='./frontend/dist',static_url_path='/')
 app.config.from_object(__name__)
@@ -23,7 +23,7 @@ app.register_blueprint(likes_api)
 
 @app.route('/')
 def index():
-    print('funciona12')
+    print('funciona13')
     return render_template('index.html')
     #return redirect('/index.html')
   #  return app.send_static_file('index.html')
