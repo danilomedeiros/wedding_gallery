@@ -5,8 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "lint": "vue-cli-service lint",
-    "start": "gunicorn app:app",
-    "postinstall": "cd frontend && npm install && npm run build"     
+    "build": "cd frontend && npm run build"    
   },
   "dependencies": {
     "axios": "^0.21.1",
