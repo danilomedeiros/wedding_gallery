@@ -22,7 +22,7 @@ app.register_blueprint(likes_api)
 
 @app.route('/')
 def index():
-    print('funciona4')
+    print('funciona5')
     #return redirect('/gallery')
     return app.send_static_file('index.html')
 
