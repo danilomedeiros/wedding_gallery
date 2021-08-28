@@ -23,8 +23,8 @@ app.register_blueprint(likes_api)
 
 @app.route('/')
 def index():
-    print('funciona11')
-    return render_template('/index.html')
+    print('funciona12')
+    return render_template('index.html')
     #return redirect('/index.html')
   #  return app.send_static_file('index.html')
 
