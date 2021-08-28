@@ -7,7 +7,7 @@ from api.likes import likes_api
 from flask_cors import CORS
 import os
 
-app = Flask(__name__, static_folder="../frontend/dist", template_folder="./frontend/dist",static_url_path='/')
+app = Flask(__name__, static_folder="./frontend/dist", template_folder="./frontend/dist",static_url_path='/')
 
 #app = Flask(__name__, static_folder='./frontend/dist',static_url_path='/')
 app.config.from_object(__name__)
