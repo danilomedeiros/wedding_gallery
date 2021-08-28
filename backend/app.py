@@ -1,4 +1,4 @@
-from flask import Flask, request, Response, jsonify,make_response
+from flask import Flask, request, Response, jsonify,make_response,redirect
 from dao.mongoflask import MongoJSONEncoder, ObjectIdConverter
 from api.photos import photos_api
 from api.comments import comments_api
@@ -19,12 +19,11 @@ app.register_blueprint(comments_api)
 app.register_blueprint(authentication_api)
 app.register_blueprint(likes_api)
 
-if __name__ == '__main__':
-    # app.run(debug=True)
-    #port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=5000)
 
 @app.route('/')
 def index():
-    print('heheh')
+    print('funciona')
     return app.send_static_file('index.html')
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
