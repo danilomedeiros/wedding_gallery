@@ -23,12 +23,16 @@ app.register_blueprint(likes_api)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+  return redirect('/gallery')
 
 @app.route('/gallery')
 def gallery():
-    return render_template('index.html')
+  return render_template('index.html')
 
+
+@app.route('/login')
+def login():
+  return render_template('index.html')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
