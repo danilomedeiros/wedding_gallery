@@ -10,7 +10,7 @@ class AuthService {
     const headers = { 'Content-Type': 'application/json' };
 
     return axios
-      .post('login', {
+      .post('api/login', {
         login: user.login,
         password: user.password,
       },

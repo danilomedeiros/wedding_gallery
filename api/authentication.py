@@ -16,7 +16,7 @@ users = db["users"]
 secret_key = '123'
 CORS(authentication_api)
 
-@authentication_api.route('/login', methods=('POST',))
+@authentication_api.route('/api/login', methods=('POST',))
 def login():
     data = request.get_json()
     login = ''
