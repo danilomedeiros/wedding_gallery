@@ -1,6 +1,6 @@
 from functools import wraps
 from datetime import datetime, timedelta
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, make_response
 import jwt
 import json
 from .model.user import User
@@ -35,9 +35,33 @@ def login():
     response = { 'accessToken': token , 'profile':user}
     return jsonify(response)
 
-@authentication_api.route('/register', methods =["POST"])
+@authentication_api.route('/user/register', methods =["POST"])
 def register():
+    print('REGISTER')
     data = request.get_json()
+    name = data['name']
+    email = data['email']
     login = data['login']
     password = data['password']
-    return User.add(login, password), 201
+    user = User.find_by_login(login);
+    if (user):
+        return make_response('login '+login+' already registered.', 422)
+    
+    user = User.find_by_email(email);
+    if(not user):
+        return make_response('invite for '+ email +' not found.', 422)
+
+    User.update(email, name, login, password)
+    return make_response('Register done.', 200)
+
+@authentication_api.route('/user/invite', methods =["POST"])
+def invite():
+    data = request.get_json()
+    email = data['email']
+    user = User.find_by_email(email);
+
+    if(user):
+        return make_response('Email already registered.', 422)
+    
+    User.add_friend(email)
+    return make_response('Friend add.', 200)

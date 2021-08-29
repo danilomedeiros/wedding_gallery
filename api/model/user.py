@@ -11,12 +11,15 @@ class User():
     engaged = 'engaged'
     friend = 'friend'
 
-    def __init__(self, _id, login, password, typee=friend):
+    def __init__(self, _id, name,  email, login=None, password=None, typee=friend):
         self.id = _id
         self.login = login
         self.password = generate_password_hash(password, method='sha256')
         self.type = typee
-    
+        self.email = email
+        self.name = name
+
+
     @classmethod
     def authenticate(cls, login, password):
         if not login:
@@ -47,7 +50,30 @@ class User():
         return None
 
     @classmethod
-    def add(cls, login, password):
-        user_json =  {"_id": ObjectId(), "login":user.login, "password": user.password}
+    def find_by_email(cls, email):
+        if(email):
+            return users.find_one({'email': email})
+        return None
+        
+    @classmethod
+    def add(cls, email, type, login, password):
+        user_json =  {"_id": ObjectId(), "login":user.login, "password": user.password, }
         users.insert_one(user_json)
         return user_json
+
+        
+    @classmethod
+    def add_friend(cls, email):
+        user_json =  {"_id": ObjectId(), "login":'', "password": '', "email": email, "typee": User.friend }
+        users.insert_one(user_json)
+        return user_json
+
+    @classmethod
+    def update(cls, email, name, login, password):
+        cripo_pass = generate_password_hash(password, method='sha256')
+        u = users.find_one_and_update(
+            {"email" : email},
+            {"$set":
+                {"name": name, "login": login, "password": cripo_pass}
+            },upsert=True )  
+        return u
