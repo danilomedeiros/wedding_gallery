@@ -1,15 +1,18 @@
-from werkzeug.security import generate_password_hash, check_password_hash
-from enum import Enum
-from dao.mongo_utils import db
-from bson.objectid import ObjectId
-from dao.aws import Storage
-import jwt
+import pymongo
+from pymongo import MongoClient
+from dao.mongoflask import MongoJSONEncoder, ObjectIdConverter
 import json
+from bson import json_util
+from bson.json_util import dumps
+import uuid
+from dao.mongo_utils import db
+from .user import User
+from dao.aws import Storage
+from bson.objectid import ObjectId
+import jwt
 
-storage = Storage()
-
-users = db['users']
 photos = db['photos']
+storage = Storage()
 
 class Photo():
     status_pending = 'pending'
@@ -37,6 +40,7 @@ class Photo():
 
     @classmethod
     def update(cls, photo_id, status):
+        print(photo_id)
         p = photos.find_one_and_update(
             {"_id" : ObjectId(photo_id)},
             {"$set":
@@ -56,7 +60,7 @@ class Photo():
         all_photos = list(cursor)
         photos_result = []
         for p in all_photos:
-            photos_result.append(Photo(3, p['path'], storage.url(p['path']), p['status']))
+            photos_result.append(Photo(str(p['_id']), p['path'], storage.url(p['path']), p['status']))
         json_photos = json.dumps(photos_result, default=vars)
 
         total = cursor.count();
@@ -69,52 +73,3 @@ class Photo():
             "currentPage": page
         }
         return pagination
-
-
-class User():
-
-    engaged = 'engaged'
-    friend = 'friend'
-
-    def __init__(self, _id, login, password, typee=friend):
-        self.id = _id
-        self.login = login
-        self.password = generate_password_hash(password, method='sha256')
-        self.type = typee
-    
-    @classmethod
-    def authenticate(cls, user, password):
-        if not password:
-            return None
-        if not user or not check_password_hash(user['password'], password):
-            return None
-        return user
-
-    @classmethod
-    def find_one(cls, obj):
-        return users.find_one(obj)
-
-    @classmethod
-    def find_by_jwt_token(cls, token):
-        payload = jwt.decode(token, '123',  algorithms=["HS256"])
-        login = payload['sub']
-        return User.find_by_login(login)
-    
-    @classmethod
-    def find_by_login(cls, login):
-        if(login):
-            return users.find_one({'login': login})
-        return None
-
-class Like():
-    def __init__(self, _id, photo_id, user_id):
-        self.id = _id
-        self.photo_id = photo_id
-        self.user_id = user_id
-
-class Comment():
-    def __init__(self, _id, photo_id, content, date=None):
-        self.id = _id
-        self.photo_id = photo_id
-        self.content = content
-        self.data = date

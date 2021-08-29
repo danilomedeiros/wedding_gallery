@@ -324,8 +324,8 @@ export default {
     },
   },
   created() {
-    // this.getComments();
-    // this.getLikes();
+    this.getComments();
+    this.getLikes();
     this.updatePhotoStatus();
   },
 };

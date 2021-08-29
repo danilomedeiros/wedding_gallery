@@ -1,19 +1,11 @@
 from flask import Blueprint, request, Response, jsonify,make_response
-import pymongo
-from pymongo import MongoClient
 from dao.mongoflask import MongoJSONEncoder, ObjectIdConverter
 import json
 from bson import json_util
-from bson.json_util import dumps
-import uuid
 from flask_cors import CORS
 import uuid
-from dao.mongo_utils import db
-from .model import Photo,User
-from dao.aws import Storage
-from bson.objectid import ObjectId
-import pagecalc
-import jwt
+from .model.photo import Photo
+from .model.user import User
 
 photos_api = Blueprint('photos', __name__)
 CORS(photos_api)
