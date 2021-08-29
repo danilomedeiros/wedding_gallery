@@ -34,7 +34,7 @@ class Photo():
         return p
 
     @classmethod
-    def update(photo_id, status):
+    def update(cls, photo_id, status):
         p = photos.find_one_and_update(
             {"_id" : ObjectId(photo_id)},
             {"$set":
