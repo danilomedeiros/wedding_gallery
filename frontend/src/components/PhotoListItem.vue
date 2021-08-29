@@ -15,11 +15,19 @@
         </v-container>
       </v-img>
       <!--<v-card-title><div><p class="grey--text">data de publicacao</p></div> </v-card-title>-->
-      <v-card-actions>
-        <!-- <v-btn color="success" flat outline dark  >Leia mais</v-btn> -->
-      </v-card-actions>
       <!-- pop up-->
     </v-card>
+      <v-card-actions>
+            <v-switch
+              v-if="currentUser && currentUser.profile.typee==='engaged'"
+              :label=status_label
+              color="blue"
+              value=""
+              hide-details
+              @click="changeStatus"
+              v-model="photo_status"
+            ></v-switch>
+          </v-card-actions>
       <v-dialog fullscreen hide-overlay  transition="dialog-bottom-transition"
         v-model="dialog"
         width="300"
@@ -28,7 +36,7 @@
         <v-card>
           <v-list three-line subheader style="padding-top: 85px;">
             <h1 class="hidden-md-and-up px-3 font-weight-light display-1">Foto 1</h1>
-            <v-subheader >Posted  por Fulano {{photo.id}}</v-subheader>
+            <v-subheader >Posted  por Fulano {{photo.id}} - {{photo.satatus}}</v-subheader>
             <v-layout
             row justify-center py-2
             class="text-xs-center">
@@ -168,6 +176,8 @@ export default {
         (r) => !!r || 'Name is required',
         (r) => r.length <= 0 || 'Name must not be empty',
       ],
+      photo_status: false,
+      status_label: false,
     };
   },
   props: {
@@ -180,6 +190,7 @@ export default {
     currentUser() {
       return this.$store.state.auth.user;
     },
+
   },
   methods: {
     addComment() {
@@ -250,17 +261,48 @@ export default {
       const headers = { 'Content-Type': 'application/json' };
       axios
         .post(path, data, { headers })
-        .then(() => {
-        });
+        .then(() => {});
+    },
+    changeStatus(evt) {
+      evt.preventDefault();
+      if (this.photo.status === 'on') {
+        this.photo.status = 'off';
+      } else {
+        this.photo.status = 'on';
+      }
+
+      const data = {
+        photo_id: this.photo.id,
+        status: this.photo.status,
+      };
+
+      const path = '/photos/changestatus';
+      const headers = { 'Content-Type': 'application/json' };
+      axios
+        .post(path, data, { headers })
+        .then(() => {});
+      this.updatePhotoStatus();
     },
     refreshLikeStatus() {
       this.total_likes_button = this.total_likes[0];
       this.user_liked = this.total_likes[1] > 0;
     },
+    updatePhotoStatus() {
+      console.log('atualizando status do label');
+      this.photo_status = (this.photo.status === 'on');
+      if (this.photo.status === 'on') {
+        this.status_label = 'on';
+      } else if (this.photo.status === 'off') {
+        this.status_label = 'off';
+      } else {
+        this.status_label = 'pending';
+      }
+    },
   },
   created() {
     this.getComments();
     this.getLikes();
+    this.updatePhotoStatus();
   },
 };
 </script>

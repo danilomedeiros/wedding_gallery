@@ -35,7 +35,6 @@ def add():
 @likes_api.route("/likes/delete", methods =["POST"])
 def delete():
     data = request.json
-    print (data)
     user_id = data['user_id']
     photo_id = data['photo_id']
     likes.delete_many({'photo_id':photo_id, 'user_id': user_id})
@@ -43,8 +42,6 @@ def delete():
 
 @likes_api.route("/likes/count/<photo_id>/<user_id>", methods=["GET"])
 def count(photo_id, user_id):
-    print('likes.COUNT '+photo_id+'   '+user_id)
-
     total_likes_photo_user = likes.find({'photo_id':photo_id, 'user_id': user_id}).count()
     total_likes_photo      = likes.find({'photo_id':photo_id}).count()
     totals = [total_likes_photo, total_likes_photo_user]
@@ -53,7 +50,6 @@ def count(photo_id, user_id):
 
 @likes_api.route("/likes/get/<id>", methods =["GET"])
 def get(id):
-    print(id)
     like = likes.find_one({"_id":ObjectId(id)})
     return make_response(jsonify(like), 200)
 

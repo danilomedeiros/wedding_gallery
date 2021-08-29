@@ -4,14 +4,14 @@ from pymongo import MongoClient
 from dao.mongoflask import MongoJSONEncoder, ObjectIdConverter
 import json
 from bson import json_util
-from bson.objectid import ObjectId
 from bson.json_util import dumps
 import uuid
 from flask_cors import CORS
 import uuid
-from dao.aws import Storage
 from dao.mongo_utils import db
-from .model import Photo
+from .model import Photo,User
+from dao.aws import Storage
+from bson.objectid import ObjectId
 
 photos_api = Blueprint('photos', __name__)
 CORS(photos_api)
@@ -25,7 +25,7 @@ def find_photos(filter):
     all_photos = list(photos.find({}).sort('_id', pymongo.DESCENDING))
     photos_result = []
     for p in all_photos:
-        photos_result.append(Photo(str(p['_id']), p['path'], storage.url(p['path'])))
+        photos_result.append(Photo(str(p['_id']), p['path'], storage.url(p['path']), p['status']))
     json_return = json.dumps(photos_result, default=vars)
     return  make_response(json_return, 200)
 
@@ -45,14 +45,12 @@ def page(filter):
 
 @photos_api.route("/photos/add", methods =["POST"])
 def add():
+    print(request)
     f = request.files['file']
-    id = ObjectId()
     file_format = f.filename.split('.')[1]
-    path = str(id)+'.'+file_format
-    photo = {"_id":id, "path":path}
-    photos.insert_one(photo)
-    storage.save(path, f)
+    user_id = request.form['user_id']
     
+    Photo.build(f, file_format, user_id);
     return make_response(jsonify('ok'), 200)
 
 @photos_api.route("/photos/get/<id>", methods =["GET"])
@@ -70,4 +68,13 @@ def delete(id):
 @photos_api.route("/photos/deleteall", methods =["GET"])
 def delete_all():
     photos.remove({})
+    return make_response(jsonify('ok'), 200)
+
+@photos_api.route("/photos/changestatus", methods =["POST"])
+def change_status():
+    data = request.get_json()
+    photo_id = data['photo_id']
+    status = data['status']
+    Photo.update(photo_id, status)
+  
     return make_response(jsonify('ok'), 200)

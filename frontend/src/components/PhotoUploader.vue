@@ -33,6 +33,11 @@ export default {
       file: null,
     };
   },
+  computed: {
+    currentUser() {
+      return this.$store.state.auth.user;
+    },
+  },
   methods: {
     selectPhoto() {
     },
@@ -42,19 +47,27 @@ export default {
       axios
         .post(path, formData, { headers })
         .then(() => {
-          this.getPhotos();
+          // this.getPhotos();
         })
         .catch(() => {
-          this.getPhotos();
+          // this.getPhotos();
         });
     },
     initForm() {
       this.file = null;
     },
     onSubmit(evt) {
+      console.log('submit');
       evt.preventDefault();
       const formData = new FormData();
+      let userId = 0;
+      if (this.currentUser) {
+        userId = this.currentUser.profile._id;
+      }
+      console.log('upload with id');
+      alert(userId);
       formData.append('file', this.file);
+      formData.append('user_id', userId);
       this.addPhoto(formData);
       this.initForm();
     },
