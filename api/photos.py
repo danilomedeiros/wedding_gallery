@@ -13,77 +13,32 @@ from .model import Photo,User
 from dao.aws import Storage
 from bson.objectid import ObjectId
 import pagecalc
+import jwt
 
 photos_api = Blueprint('photos', __name__)
 CORS(photos_api)
 
-photos = db["photos"]
-storage = Storage()
-
-@photos_api.route("/photos/list/<filter>", methods=["GET"])
-def find_photos(filter):
-    print(filter)
-    all_photos = list(photos.find({}).sort('_id', pymongo.DESCENDING))
-    photos_result = []
-    for p in all_photos:
-        photos_result.append(Photo(str(p['_id']), p['path'], storage.url(p['path']), p['status']))
-    json_return = json.dumps(photos_result, default=vars)
-    return  make_response(json_return, 200)
-
-@photos_api.route("/photos/list_page/<status>/<page_num>", methods=["GET"])
-def page(status, page_num):
+@photos_api.route("/photos/list_page/<page_num>", methods=["GET"])
+def page(page_num):
     page_size = 6
     page = int(page_num)
-    skips = page_size * (page - 1)
-    query = {}
 
-    if(status and status != 'all'):
-        query = {"status":status}
-    cursor = photos.find(query).skip(skips).limit(page_size)
-       
-    all_photos = list(cursor)
-    photos_result = []
-    for p in all_photos:
-        photos_result.append(Photo(3, p['path'], storage.url(p['path']), p['status']))
-    json_photos = json.dumps(photos_result, default=vars)
-
-    total = cursor.count();
+    auth_header = request.headers.get('Authorization')
     
-    total_pages = (total + page_size - 1) // page_size
-    pagination = {
-        "totalItems": total,
-        "photos": json_photos,
-        "totalPages": total_pages,
-        "currentPage": page
-    }
+    user = None
+    if auth_header:
+        user = User.find_by_jwt_token(auth_header.split(" ")[1])
 
+    pagination = Photo.page(page, page_size, user)
     return  make_response(jsonify(pagination), 200)
 
 @photos_api.route("/photos/add", methods =["POST"])
 def add():
-    print(request)
     f = request.files['file']
     file_format = f.filename.split('.')[1]
     user_id = request.form['user_id']
     
     Photo.build(f, file_format, user_id);
-    return make_response(jsonify('ok'), 200)
-
-@photos_api.route("/photos/get/<id>", methods =["GET"])
-def get(id):
-    print(id)
-    photo = photos.find_one({"_id":ObjectId(id)})
-    return make_response(jsonify(photo), 200)
-
-@photos_api.route("/photos/delete/<id>", methods =["DELETE"])
-def delete(id):
-    photo_db = photos.find_one({"_id":ObjectId(id)})
-    photos.delete_one({"_id":ObjectId(id)})
-    return make_response(jsonify(photo_db), 200)
-
-@photos_api.route("/photos/deleteall", methods =["GET"])
-def delete_all():
-    photos.remove({})
     return make_response(jsonify('ok'), 200)
 
 @photos_api.route("/photos/changestatus", methods =["POST"])

@@ -36,9 +36,8 @@ def login():
         'sub': user['login'],
         'iat':datetime.utcnow(),
         'exp': datetime.utcnow() + timedelta(minutes=30)},
-        secret_key)
+        secret_key,  algorithm='HS256')
     response = { 'accessToken': token , 'profile':user_from_db}
-    print(response)
     return jsonify(response)
 
 

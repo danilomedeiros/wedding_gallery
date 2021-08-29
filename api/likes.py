@@ -22,7 +22,6 @@ storage = Storage()
 
 @likes_api.route("/likes/add", methods =["POST"])
 def add():
-    print('likes.add')
     data = request.json
     print (data)
     user_id = data['user_id']

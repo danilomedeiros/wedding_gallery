@@ -3,6 +3,8 @@ from enum import Enum
 from dao.mongo_utils import db
 from bson.objectid import ObjectId
 from dao.aws import Storage
+import jwt
+import json
 
 storage = Storage()
 
@@ -42,6 +44,33 @@ class Photo():
             },upsert=True )  
         return p
 
+    @classmethod
+    def page(cls, page, page_size, user):
+        if(not user or user['typee'] == User.friend ):
+            query = {'status':'on'}
+        else:
+            query = {}
+        skips = page_size * (page - 1)
+        cursor = photos.find(query).skip(skips).limit(page_size)
+        
+        all_photos = list(cursor)
+        photos_result = []
+        for p in all_photos:
+            photos_result.append(Photo(3, p['path'], storage.url(p['path']), p['status']))
+        json_photos = json.dumps(photos_result, default=vars)
+
+        total = cursor.count();
+        
+        total_pages = (total + page_size - 1) // page_size
+        pagination = {
+            "totalItems": total,
+            "photos": json_photos,
+            "totalPages": total_pages,
+            "currentPage": page
+        }
+        return pagination
+
+
 class User():
 
     engaged = 'engaged'
@@ -64,6 +93,18 @@ class User():
     @classmethod
     def find_one(cls, obj):
         return users.find_one(obj)
+
+    @classmethod
+    def find_by_jwt_token(cls, token):
+        payload = jwt.decode(token, '123',  algorithms=["HS256"])
+        login = payload['sub']
+        return User.find_by_login(login)
+    
+    @classmethod
+    def find_by_login(cls, login):
+        if(login):
+            return users.find_one({'login': login})
+        return None
 
 class Like():
     def __init__(self, _id, photo_id, user_id):

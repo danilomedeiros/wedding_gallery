@@ -20,7 +20,9 @@
     </v-container>
 </template>
 <script>
+
 import axios from 'axios';
+import authHeader from '../services/auth-header';
 import PhotoListItem from './PhotoListItem.vue';
 import PhotoUploader from './PhotoUploader.vue';
 
@@ -44,12 +46,10 @@ export default {
   },
   methods: {
     getPhotos() {
-      console.log(this.page);
-      const path = `photos/list_page/all/${this.page}`;
+      const path = `photos/list_page/${this.page}`;
       // const path = 'photos/list/all';
-
       axios
-        .get(path)
+        .get(path, { headers: authHeader() })
         .then((res) => {
           this.photos = JSON.parse(res.data.photos);
           this.totalPages = res.data.totalPages;
