@@ -5,7 +5,7 @@ import router from './router';
 import vuetify from './plugins/vuetify';
 import store from './store';
 
-axios.defaults.baseURL = 'http://localhost:5000';
+axios.defaults.baseURL = '';
 Vue.config.productionTip = false;
 Vue.config.silent = true;
 
