@@ -6,7 +6,19 @@
         height="200px"
         :src="photo.url"
       >
-        <v-container fill-height fluid>
+        <template v-slot:placeholder>
+          <v-row
+            class="fill-height ma-0"
+            align="center"
+            justify="center"
+          >
+            <v-progress-circular
+              indeterminate
+            color="grey lighten-2"
+            ></v-progress-circular>
+          </v-row>
+        </template>
+          <v-container fill-height fluid>
           <v-layout fill-height>
             <v-flex xs12 align-end flexbox>
               <h2 class="headline" style="text-shadow: 0px 2px 5px #222;"></h2>
@@ -35,13 +47,26 @@
       <v-flex xs12 md8 offset-md2 lg6 offset-lg3>
         <v-card>
           <v-list three-line subheader style="padding-top: 85px;">
-            <h1 class="hidden-md-and-up px-3 font-weight-light display-1">Foto 1</h1>
-            <v-subheader >Posted  por Fulano {{photo.id}} - {{photo.satatus}}</v-subheader>
             <v-layout
             row justify-center py-2
             class="text-xs-center">
               <v-responsive max-width="600px">
-                <v-img :src="photo.url"></v-img>
+                <v-img
+                  :src="photo.url"
+                  >
+                  <template v-slot:placeholder>
+                    <v-row
+                      class="fill-height ma-0"
+                      align="center"
+                      justify="center"
+                    >
+                      <v-progress-circular
+                        indeterminate
+                        color="blue"
+                      ></v-progress-circular>
+                    </v-row>
+                  </template>
+                </v-img>
               </v-responsive>
             </v-layout>
           </v-list>
@@ -288,7 +313,6 @@ export default {
       this.user_liked = this.total_likes[1] > 0;
     },
     updatePhotoStatus() {
-      console.log('atualizando status do label');
       this.photo_status = (this.photo.status === 'on');
       if (this.photo.status === 'on') {
         this.status_label = 'on';
@@ -300,8 +324,8 @@ export default {
     },
   },
   created() {
-    this.getComments();
-    this.getLikes();
+    // this.getComments();
+    // this.getLikes();
     this.updatePhotoStatus();
   },
 };

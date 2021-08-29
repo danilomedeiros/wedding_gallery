@@ -1,5 +1,10 @@
 <template>
     <v-container>
+    <v-pagination
+      v-model="page"
+      :length="totalPages"
+     @input="handlePageChange"
+    ></v-pagination>
       <v-layout v-if="currentUser" row wrap>
           <v-flex xs12 sm12 lg12 pa-2>
             <photo-uploader/>
@@ -14,7 +19,6 @@
       </v-layout>
     </v-container>
 </template>
-
 <script>
 import axios from 'axios';
 import PhotoListItem from './PhotoListItem.vue';
@@ -28,6 +32,9 @@ export default {
     return {
       photos: [],
       file: null,
+      totalPages: 0,
+      page: 1,
+      currentPage: 1,
     };
   },
   computed: {
@@ -37,42 +44,21 @@ export default {
   },
   methods: {
     getPhotos() {
-      const path = 'photos/list/all';
+      console.log(this.page);
+      const path = `photos/list_page/all/${this.page}`;
+      // const path = 'photos/list/all';
+
       axios
         .get(path)
         .then((res) => {
-          this.photos = res.data;
+          this.photos = JSON.parse(res.data.photos);
+          this.totalPages = res.data.totalPages;
+          this.currentPage = res.data.currentPage;
         });
-      //  .catch((error) => {
-      //    // eslint-disable-next-line
-      //  });
     },
-    addPhoto(formData) {
-      const path = 'photos/add';
-      const headers = { 'Content-Type': 'application/json' };
-      axios
-        .post(path, formData, { headers })
-        .then(() => {
-          this.getPhotos();
-        });
-      //  .catch((error) => {
-      //    // eslint-disable-next-line
-      //  });
-    },
-    initForm() {
-      this.file = null;
-    },
-    onSubmit(evt) {
-      evt.preventDefault();
-      const formData = new FormData();
-      formData.append('file', this.file);
-      this.addPhoto(formData);
-      this.initForm();
-    },
-    onReset(evt) {
-      evt.preventDefault();
-      this.$refs.addPhotoModal.hide();
-      this.initForm();
+    handlePageChange(value) {
+      this.currentPage = value;
+      this.getPhotos();
     },
   },
   created() {

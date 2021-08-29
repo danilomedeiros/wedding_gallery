@@ -12,6 +12,7 @@ from dao.mongo_utils import db
 from .model import Photo,User
 from dao.aws import Storage
 from bson.objectid import ObjectId
+import pagecalc
 
 photos_api = Blueprint('photos', __name__)
 CORS(photos_api)
@@ -29,19 +30,34 @@ def find_photos(filter):
     json_return = json.dumps(photos_result, default=vars)
     return  make_response(json_return, 200)
 
-@photos_api.route("/photos/list_page/<filter>", methods=["GET"])
-def page(filter):
-    print(filter)
+@photos_api.route("/photos/list_page/<status>/<page_num>", methods=["GET"])
+def page(status, page_num):
+    page_size = 6
+    page = int(page_num)
+    skips = page_size * (page - 1)
+    query = {}
+
+    if(status and status != 'all'):
+        query = {"status":status}
+    cursor = photos.find(query).skip(skips).limit(page_size)
+       
+    all_photos = list(cursor)
+    photos_result = []
+    for p in all_photos:
+        photos_result.append(Photo(3, p['path'], storage.url(p['path']), p['status']))
+    json_photos = json.dumps(photos_result, default=vars)
+
+    total = cursor.count();
     
-    limit = 4
-    offset =  3 
-    
-    starting_id = photos.find().sort('_id',pymongo.ASCENDING)
-    last_id = starting_id[offset]['_id']
-    
-    cursor = photos.find({'_id':{'$gte':last_id}}).sort('_id', pymongo.ASCENDING).limit(limit)
-    json_return = json.dumps(list(cursor), default=json_util.default)
-    return  make_response(json_return, 200)
+    total_pages = (total + page_size - 1) // page_size
+    pagination = {
+        "totalItems": total,
+        "photos": json_photos,
+        "totalPages": total_pages,
+        "currentPage": page
+    }
+
+    return  make_response(jsonify(pagination), 200)
 
 @photos_api.route("/photos/add", methods =["POST"])
 def add():
