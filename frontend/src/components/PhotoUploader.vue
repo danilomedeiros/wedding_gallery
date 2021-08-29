@@ -10,6 +10,7 @@
           v-model="file"
           >
         </v-file-input>
+        <div class="mt-3">{{ file ? 'Selected file:'+file.name : "" }}</div>
         <v-btn
           v-if="file"
           depressed
@@ -19,7 +20,6 @@
           >
           Upload
         </v-btn>
-        <div class="mt-3">Selected file: {{ file ? file.name : "" }}</div>
       </form>
   </v-card>
 </template>
@@ -57,15 +57,12 @@ export default {
       this.file = null;
     },
     onSubmit(evt) {
-      console.log('submit');
       evt.preventDefault();
       const formData = new FormData();
       let userId = 0;
       if (this.currentUser) {
         userId = this.currentUser.profile._id;
       }
-      console.log('upload with id');
-      alert(userId);
       formData.append('file', this.file);
       formData.append('user_id', userId);
       this.addPhoto(formData);
