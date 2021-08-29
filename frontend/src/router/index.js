@@ -3,6 +3,7 @@ import VueRouter from 'vue-router';
 import Gallery from '../components/Gallery.vue';
 import Login from '../views/Login.vue';
 import Register from '../views/Register.vue';
+import Friends from '../views/Friends.vue';
 
 Vue.use(VueRouter);
 
@@ -32,6 +33,10 @@ const routes = [
   {
     path: '/register',
     component: Register,
+  },
+  {
+    path: '/friends',
+    component: Friends,
   },
 ];
 

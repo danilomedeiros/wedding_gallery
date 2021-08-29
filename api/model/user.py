@@ -19,7 +19,6 @@ class User():
         self.email = email
         self.name = name
 
-
     @classmethod
     def authenticate(cls, login, password):
         if not login:
@@ -61,10 +60,9 @@ class User():
         users.insert_one(user_json)
         return user_json
 
-        
     @classmethod
-    def add_friend(cls, email):
-        user_json =  {"_id": ObjectId(), "login":'', "password": '', "email": email, "typee": User.friend }
+    def add_friend(cls, email, name):
+        user_json =  {"_id": ObjectId(), "name":name, "login":'', "password": '', "email": email, "typee": User.friend }
         users.insert_one(user_json)
         return user_json
 
@@ -77,3 +75,12 @@ class User():
                 {"name": name, "login": login, "password": cripo_pass}
             },upsert=True )  
         return u
+
+    @classmethod
+    def list(cls, type):
+        all_friends = list(users.find({'typee': type}))
+        friends_result = []
+        for p in all_friends:
+            f = {"name":p['name'], "email":p['email']} 
+            friends_result.append(f)
+        return friends_result

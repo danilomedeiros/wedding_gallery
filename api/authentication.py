@@ -1,5 +1,6 @@
 from functools import wraps
 from datetime import datetime, timedelta
+from bson import json_util
 from flask import Blueprint, jsonify, request, make_response
 import jwt
 import json
@@ -58,10 +59,17 @@ def register():
 def invite():
     data = request.get_json()
     email = data['email']
+    name = data['name']
     user = User.find_by_email(email);
 
     if(user):
         return make_response('Email already registered.', 422)
     
-    User.add_friend(email)
+    User.add_friend(email, name)
     return make_response('Friend add.', 200)
+
+@authentication_api.route('/user/list_friends', methods =["GET"])
+def friends():   
+    json_return = json.dumps(User.list('friend'), default=json_util.default)
+    return make_response(json_return , 200)
+

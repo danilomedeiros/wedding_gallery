@@ -27,6 +27,14 @@
           </v-btn>
         </div>
         <div v-if="currentUser" >
+          <v-btn v-if="currentUser.profile.typee == 'engaged'"
+          to=/friends
+          text
+          >
+          <span class="mr-2">Friends</span>
+          <v-icon>mdi-open-in-new</v-icon>
+          </v-btn>
+
           <v-btn
           @click.prevent="logOut"
           text
