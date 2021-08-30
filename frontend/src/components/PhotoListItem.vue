@@ -155,6 +155,7 @@
 
              <v-list-tile-content>
                <v-list-tile-title v-html="comment.author"></v-list-tile-title>
+               :&nbsp;&nbsp;&nbsp;
                <v-list-tile-sub-title v-html="comment.content"></v-list-tile-sub-title>
              </v-list-tile-content>
            </v-list-tile>

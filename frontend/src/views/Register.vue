@@ -93,10 +93,6 @@ export default {
     handleRegister(evt) {
       evt.preventDefault();
       this.loading = true;
-      console.log(this.user.email);
-      console.log(this.user.name);
-      console.log(this.user.login);
-      console.log(this.user.password);
       if (this.user.email && this.user.name && this.user.login && this.user.password) {
         const data = {
           email: this.user.email,

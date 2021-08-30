@@ -10,7 +10,7 @@ export default new Vuetify({
         primary: '#cc8084',
         secondary: '#e2b7b9',
         accent: '#6eacb7',
-        error: '#b71c1c',
+        error: '#6eacb7',
         info: '#a1c9d0',
       },
     },

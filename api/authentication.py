@@ -39,7 +39,6 @@ def login():
 
 @authentication_api.route('/user/register', methods =["POST"])
 def register():
-    print('REGISTER')
     data = request.get_json()
     name = data['name']
     email = data['email']
@@ -47,15 +46,12 @@ def register():
     password = data['password']
     user = User.find_by_login(login);
     if (user):
-        print('1');
         return make_response('login '+login+' already registered.', 422)
     
     user = User.find_by_email(email);
     if(not user):
-        print('2');
         return make_response('invite for \''+ email +'\' not found.', 422)
 
-    print('3');
     User.update(email, name, login, password)
     return make_response('Register done.', 200)
 
