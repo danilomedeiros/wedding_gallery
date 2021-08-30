@@ -1,9 +1,13 @@
 
+from dotenv import load_dotenv
 from pymongo import MongoClient
+import os
 
 cluster = None
 
 if not cluster:
-    cluster = MongoClient("mongodb+srv://wedding_gallery:wedding_gallery@cluster0.gbp8l.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+    load_dotenv()
+    database_url = os.environ.get('database_url')
+    cluster = MongoClient(database_url)
 
 db = cluster["wedding_gallery_db"]

@@ -6,3 +6,4 @@ dnspython
 boto3==1.18.31
 isodate==0.6.0
 gunicorn
+python-dotenv

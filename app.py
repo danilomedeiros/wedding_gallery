@@ -1,3 +1,4 @@
+from dotenv import load_dotenv
 from flask import Flask, request, Response, jsonify,make_response,redirect, render_template
 from dao.mongoflask import MongoJSONEncoder, ObjectIdConverter
 from api.photos import photos_api
@@ -19,7 +20,6 @@ app.register_blueprint(photos_api)
 app.register_blueprint(comments_api)
 app.register_blueprint(authentication_api)
 app.register_blueprint(likes_api)
-
 
 @app.route('/')
 def index():

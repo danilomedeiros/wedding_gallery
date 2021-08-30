@@ -1,9 +1,13 @@
+from dotenv import load_dotenv
+import os
 import boto3
 
 class Storage:
 
-    def __init__(self, bucket_name ='danilo-medeiros'):      
-        self.bucket_name = bucket_name
+    def __init__(self):
+        load_dotenv()
+        self.bucket_name = os.environ.get('s3_bucket')
+        print(self.bucket_name)
         self.resource = boto3.resource('s3')
         self.client = boto3.client('s3')
         self.bucket = self.resource.Bucket(self.bucket_name)
@@ -22,3 +26,4 @@ class Storage:
             }
         )
         return url
+
