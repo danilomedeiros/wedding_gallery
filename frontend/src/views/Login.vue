@@ -1,5 +1,6 @@
 <template>
   <v-app id="inspire">
+    <notification ref="notification"></notification>
     <v-content>
       <v-container fluid fill-height>
         <v-layout align-center justify-center>
@@ -40,8 +41,14 @@
 <script>
 import User from '../models/users';
 
+// eslint-disable-next-line no-unused-vars
+import Notification from '../components/Notification.vue';
+
 export default {
   name: 'Login',
+  components: {
+    Notification,
+  },
   data() {
     return {
       user: new User('', ''),
@@ -59,6 +66,9 @@ export default {
       // this.$router.push('/profile');
     }
   },
+  mounted() {
+    this.$root.notification = this.$refs.notification;
+  },
   methods: {
     handleLogin() {
       this.loading = true;
@@ -67,9 +77,8 @@ export default {
           () => {
             this.$router.push('/gallery');
           },
-          (error) => {
-            this.loading = false;
-            this.message = (error.response && error.response.data) || error.message || error.toString();
+          (e) => {
+            this.$root.notification.show({ message: e.response.data, color: 'error' });
           },
         );
       }

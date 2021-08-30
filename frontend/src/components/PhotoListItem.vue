@@ -33,7 +33,7 @@
             <v-switch
               v-if="currentUser && currentUser.profile.typee==='engaged'"
               :label=status_label
-              color="blue"
+              color="accent"
               value=""
               hide-details
               @click="changeStatus"
@@ -70,7 +70,7 @@
               </v-responsive>
             </v-layout>
           </v-list>
-          <v-list class="py-0">
+          <v-list three-line subheader style="padding-left: 50px;padding-right: 50px;">
             <v-subheader>
 
               <v-btn v-if="currentUser"  @click.prevent="likeIt()" primary >
@@ -85,10 +85,10 @@
               </div>
             </v-subheader>
           </v-list>
-          <div v-if="currentUser">
-          <v-list class="py-0">
+          <div v-if="currentUser"   >
+          <v-list three-line subheader style="padding-left: 50px;padding-right: 50px;">
             <v-subheader>Post a comment</v-subheader>
-          </v-list>
+
             <v-form ref="commentForm" v-model="validComment" @submit.prevent="postComment()">
               <v-container fluid py-0>
                 <v-layout row wrap>
@@ -126,21 +126,18 @@
                 </v-layout>
               </v-container>
             </v-form>
+          </v-list>
           </div>
           <div v-else>
             <v-subheader>log in to post comments</v-subheader>
           </div>
-        <v-list three-line subheader>
+        <v-list three-line subheader style="padding-left: 50px;padding-right: 50px;">
           <v-subheader>{{ comments.length }} Comment(s)</v-subheader>
-        <v-alert
+        <p
           v-if="comments.length <= 0"
-          :value="true"
-          color="info"
-          icon="info"
-          class="mx-3"
         >
           Be the first to leave a comment!
-        </v-alert>
+        </p>
         <p></p>
          <template v-for="(comment, i) in comments">
            <v-divider

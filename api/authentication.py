@@ -26,7 +26,8 @@ def login():
     user = User.authenticate(login, password)
 
     if not user:
-        return jsonify({ 'message': 'Invalid credentials', 'authenticated': False }), 401
+        return make_response('Invalid credentials', 401)
+        # return jsonify({ 'message': 'Invalid credentials', 'authenticated': False }), 401
  
     token = jwt.encode({
         'sub': user['login'],
@@ -46,12 +47,15 @@ def register():
     password = data['password']
     user = User.find_by_login(login);
     if (user):
+        print('1');
         return make_response('login '+login+' already registered.', 422)
     
     user = User.find_by_email(email);
     if(not user):
-        return make_response('invite for '+ email +' not found.', 422)
+        print('2');
+        return make_response('invite for \''+ email +'\' not found.', 422)
 
+    print('3');
     User.update(email, name, login, password)
     return make_response('Register done.', 200)
 

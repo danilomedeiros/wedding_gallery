@@ -6,7 +6,12 @@
       dark
     >
       <div class="d-flex align-center">
-        <h1>Wedding Gallery</h1>
+          <v-btn
+          @click.prevent="home"
+          text
+          >
+          <span class="mr-2">Wedding Gallery</span>
+        </v-btn>
       </div>
 
       <v-spacer></v-spacer>
@@ -16,14 +21,14 @@
           text
           >
           <span class="mr-2">Login</span>
-          <v-icon>mdi-open-in-new</v-icon>
+          <v-icon></v-icon>
           </v-btn>
           <v-btn
           to="/register"
           text
           >
           <span class="mr-2">Register as a guest</span>
-          <v-icon>mdi-open-in-new</v-icon>
+          <v-icon></v-icon>
           </v-btn>
         </div>
         <div v-if="currentUser" >
@@ -32,7 +37,7 @@
           text
           >
           <span class="mr-2">Friends</span>
-          <v-icon>mdi-open-in-new</v-icon>
+          <v-icon>mdi-account-group </v-icon>
           </v-btn>
 
           <v-btn
@@ -40,7 +45,7 @@
           text
           >
           <span class="mr-2">Logout</span>
-          <v-icon>mdi-open-in-new</v-icon>
+          <v-icon>mdi-user-arrow-right-outline</v-icon>
           </v-btn>
         </div>
 
@@ -57,7 +62,6 @@
 export default {
   name: 'App',
   data: () => ({
-    //
   }),
   computed: {
     currentUser() {
@@ -81,6 +85,10 @@ export default {
       this.$store.dispatch('auth/logout');
       this.$router.push('/login');
     },
+    home() {
+      this.$router.push('/gallery');
+    },
   },
 };
+
 </script>

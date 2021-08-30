@@ -1,12 +1,13 @@
 <template>
   <v-app id="inspire">
+    <notification ref="notification"></notification>
     <v-content>
       <v-container fluid fill-height>
         <v-layout align-center justify-center>
           <v-flex xs12 sm8 md4>
             <v-card class="elevation-12">
               <v-toolbar dark color="primary">
-                <v-toolbar-title>Login</v-toolbar-title>
+                <v-toolbar-title>Register</v-toolbar-title>
               </v-toolbar>
               <v-card-text>
                 <v-form @submit.prevent="handleLogin">
@@ -46,7 +47,7 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn @click="handleRegister" color="primary">Register</v-btn>
+                <v-btn :disabled="!(user.email && user.name && user.login && user.password && (user.password == user.password2))" @click="handleRegister" color="primary">Register</v-btn>
               </v-card-actions>
             </v-card>
           </v-flex>
@@ -60,9 +61,14 @@
 
 import axios from 'axios';
 import User from '../models/users';
+// eslint-disable-next-line no-unused-vars
+import Notification from '../components/Notification.vue';
 
 export default {
   name: 'Login',
+  components: {
+    Notification,
+  },
   data() {
     return {
       user: new User('', '', '', '', ''),
@@ -79,6 +85,9 @@ export default {
     if (this.loggedIn) {
       // this.$router.push('/profile');
     }
+  },
+  mounted() {
+    this.$root.notification = this.$refs.notification;
   },
   methods: {
     handleRegister(evt) {
@@ -102,6 +111,9 @@ export default {
           .post(path, data, { headers })
           .then(() => {
             this.$router.push('/login');
+          },
+          (e) => {
+            this.$root.notification.show({ message: e.response.data, color: 'error' });
           });
       }
     },

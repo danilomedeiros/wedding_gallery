@@ -5,6 +5,8 @@
       :length="totalPages"
      @input="handlePageChange"
     ></v-pagination>
+    <v-subheader></v-subheader>
+
       <v-layout v-if="currentUser" row wrap>
           <v-flex xs12 sm12 lg12 pa-2>
             <photo-uploader/>
